@@ -1,36 +1,82 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Recipe Assistant App
+
+A modern web application that helps users find recipes based on ingredients they have on hand, dietary preferences, and meal types. The app uses Next.js, React, and Tailwind CSS for the frontend, and leverages Mistral AI for generating custom recipes.
+
+## Features
+
+- **Ingredient-Based Recipe Search**: Find recipes based on ingredients you have available
+- **Dietary Preferences**: Filter recipes based on dietary restrictions (vegetarian, vegan, etc.)
+- **Meal Type Filtering**: Find recipes for specific meal types (breakfast, lunch, dinner, etc.)
+- **Allergy Consideration**: Exclude recipes containing allergens
+- **AI-Powered Recipe Generation**: Generate custom recipes using Mistral AI
+- **Meal Planning**: Create weekly meal plans from your favorite recipes
+- **Responsive Design**: Works on desktop and mobile devices
+
+## Mistral AI Integration
+
+This app is integrated with Mistral AI to provide personalized recipe suggestions. The integration:
+
+- Generates custom recipes based on your ingredients, dietary preferences, and restrictions
+- Provides more diverse recipe suggestions tailored to your specific needs
+- Offers creative cooking ideas beyond traditional recipes
+
+**Note**: The app comes with a pre-configured Mistral AI API key, so you don't need to provide your own key to use the AI features.
 
 ## Getting Started
 
-First, run the development server:
+First, install the dependencies:
+
+```bash
+npm install
+# or
+yarn install
+```
+
+Then, run the development server:
 
 ```bash
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## How to Use
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Enter the ingredients you have available
+2. Select any dietary preferences or restrictions
+3. Choose a meal type (optional)
+4. Add any allergies or ingredients to avoid
+5. Click "Find Recipes" to see your personalized recipe suggestions
+6. Click on a recipe card to view detailed instructions
+7. Use the "Generate Meal Plan" button to create a weekly meal plan
 
-## Learn More
+## Technologies Used
 
-To learn more about Next.js, take a look at the following resources:
+- **Next.js**: React framework for server-rendered applications
+- **React**: Frontend library for building user interfaces
+- **Tailwind CSS**: Utility-first CSS framework
+- **TypeScript**: Typed JavaScript for better development experience
+- **Mistral AI**: AI language model for generating custom recipes
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Project Structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+/app
+  /components      # UI components
+  /utils           # Utility functions and mock data
+  /hooks           # Custom React hooks
+  page.tsx         # Main application page
+/public            # Static assets
+```
 
-## Deploy on Vercel
+## License
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Acknowledgments
+
+- Recipe data inspired by various culinary sources
+- Icons from [React Icons](https://react-icons.github.io/react-icons/)
+- Design inspired by modern recipe applications
