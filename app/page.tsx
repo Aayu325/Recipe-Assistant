@@ -22,7 +22,7 @@ interface DailyMealPlan {
   breakfast: Recipe;
   lunch: Recipe;
   dinner: Recipe;
-  onViewRecipe?: (recipe: Recipe) => void;
+  onViewRecipe: (recipe: Recipe) => void;
 }
 
 export default function Home() {

@@ -5,7 +5,7 @@ interface DailyMealPlan {
   breakfast: Recipe;
   lunch: Recipe;
   dinner: Recipe;
-  onViewRecipe?: (recipe: Recipe) => void;
+  onViewRecipe: (recipe: Recipe) => void;
 }
 
 export const mockRecipes: Recipe[] = [
@@ -238,7 +238,8 @@ export const generateMealPlan = (recipes: Recipe[]): DailyMealPlan[] => {
       day,
       breakfast: getUniqueRandomRecipe(),
       lunch: getUniqueRandomRecipe(),
-      dinner: getUniqueRandomRecipe()
+      dinner: getUniqueRandomRecipe(),
+      onViewRecipe: () => {} // Default no-op callback
     });
   }
   
