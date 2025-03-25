@@ -1,5 +1,12 @@
 import { Recipe } from '../components/RecipeCard';
 
+interface DailyMealPlan {
+  day: string;
+  breakfast: Recipe;
+  lunch: Recipe;
+  dinner: Recipe;
+}
+
 export const mockRecipes: Recipe[] = [
   {
     id: 'r1',
@@ -181,11 +188,10 @@ export const mockRecipes: Recipe[] = [
 ];
 
 // Function to generate a meal plan from provided recipes
-export const generateMealPlan = (recipes: Recipe[]): any[] => {
+export const generateMealPlan = (recipes: Recipe[]): DailyMealPlan[] => {
   const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-  const mealPlan = [];
+  const mealPlan: DailyMealPlan[] = [];
   
-  // Function to get a random recipe that hasn't been used yet
   // Make a copy of recipes to avoid modifying the original array
   const availableRecipes = [...recipes];
   // Add some mock recipes if we don't have enough to fill the meal plan

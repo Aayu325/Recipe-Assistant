@@ -121,9 +121,6 @@ function DayMealPlan({ day, breakfast, lunch, dinner, onViewRecipe }: MealDayPro
 }
 
 export default function MealPlan({ mealPlan, onViewRecipe }: MealPlanProps) {
-  // Expand the first day by default
-  const [expandedDay, setExpandedDay] = useState(mealPlan.length > 0 ? mealPlan[0].day : '');
-
   return (
     <div>
       {mealPlan.map((dayPlan, index) => (

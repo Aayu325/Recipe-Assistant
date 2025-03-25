@@ -101,7 +101,7 @@ export default function UserInputForm({ onSubmit }: UserInputFormProps) {
       <div className="mb-6">
         <h2 className="text-2xl font-bold mb-4">Find Recipes</h2>
         <p className="text-gray-600 dark:text-gray-300 mb-2">
-          Enter ingredients you have on hand, and we'll find recipes for you. The app is now powered by Mistral AI to suggest custom recipes based on your inputs!
+          Enter ingredients you have on hand, and we&apos;ll find recipes for you. The app is now powered by Mistral AI to suggest custom recipes based on your inputs!
         </p>
       </div>
 

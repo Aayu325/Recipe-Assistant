@@ -1,14 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import UserInputForm from './components/UserInputForm';
 import RecipeCard, { Recipe } from './components/RecipeCard';
 import RecipeDetails from './components/RecipeDetails';
 import MealPlan from './components/MealPlan';
-import ApiKeyModal from './components/ApiKeyModal';
 import { mockRecipes, filterRecipes, generateMealPlan } from './utils/mockData';
 import { fetchRecipesWithAPI } from './utils/mistralService';
-import { FaUtensils, FaCalendarAlt, FaKey, FaSpinner, FaRobot } from 'react-icons/fa';
+import { FaUtensils, FaCalendarAlt, FaSpinner, FaRobot } from 'react-icons/fa';
 
 enum View {
   INPUT,
@@ -18,18 +17,23 @@ enum View {
   LOADING
 }
 
+interface DailyMealPlan {
+  breakfast: Recipe;
+  lunch: Recipe;
+  dinner: Recipe;
+}
+
 export default function Home() {
   const [view, setView] = useState<View>(View.INPUT);
   const [filteredRecipes, setFilteredRecipes] = useState<Recipe[]>([]);
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
-  const [mealPlan, setMealPlan] = useState<any[]>([]);
+  const [mealPlan, setMealPlan] = useState<DailyMealPlan[]>([]);
   const [userInput, setUserInput] = useState({
     ingredients: [] as string[],
     dietaryPreferences: [] as string[],
     mealType: '',
     allergies: [] as string[],
   });
-  const [isApiKeyModalOpen, setIsApiKeyModalOpen] = useState(false);
   // Mistral AI is enabled by default since we have the key hardcoded
   const [isUsingMistral, setIsUsingMistral] = useState(true);
   const [loading, setLoading] = useState(false);
