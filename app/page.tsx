@@ -28,15 +28,8 @@ export default function Home() {
   const [filteredRecipes, setFilteredRecipes] = useState<Recipe[]>([]);
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const [mealPlan, setMealPlan] = useState<DailyMealPlan[]>([]);
-  const [userInput, setUserInput] = useState({
-    ingredients: [] as string[],
-    dietaryPreferences: [] as string[],
-    mealType: '',
-    allergies: [] as string[],
-  });
   // Mistral AI is enabled by default since we have the key hardcoded
   const [isUsingMistral, setIsUsingMistral] = useState(true);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleFormSubmit = async (formData: {
@@ -45,7 +38,6 @@ export default function Home() {
     mealType: string;
     allergies: string[];
   }) => {
-    setUserInput(formData);
     setError(null);
     
     // Check if ingredients are provided
@@ -54,9 +46,8 @@ export default function Home() {
       return;
     }
 
-    // Set loading state regardless of which path we take
+    // Set loading state
     setView(View.LOADING);
-    setLoading(true);
 
     try {
       // If Mistral AI is enabled (which is by default)
@@ -74,7 +65,7 @@ export default function Home() {
           setView(View.RECIPES);
           return; // Exit early if we have AI-generated recipes
         } else {
-          setError("Couldn't generate custom recipes. Showing results from our database instead.");
+          setError("Couldn&apos;t generate custom recipes. Showing results from our database instead.");
         }
       }
       
@@ -104,8 +95,6 @@ export default function Home() {
       setError("There was an error processing your request. Showing all available recipes.");
       setFilteredRecipes(mockRecipes);
       setView(View.RECIPES);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -166,7 +155,7 @@ export default function Home() {
               <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/30 rounded-md">
                 <h3 className="font-bold mb-2">About Mistral AI Integration</h3>
                 <p className="text-sm">
-                  With Mistral AI enabled, we'll generate custom recipes based on your ingredients and preferences.
+                  With Mistral AI enabled, we&apos;ll generate custom recipes based on your ingredients and preferences.
                   This provides more diverse and personalized recipe suggestions beyond our standard database.
                 </p>
               </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { FaPlus, FaTrash, FaUtensils } from 'react-icons/fa';
 
 interface UserInputFormProps {
@@ -240,7 +240,7 @@ export default function UserInputForm({ onSubmit }: UserInputFormProps) {
             <FaUtensils className="mr-2" /> AI Recipe Generation
           </h3>
           <p className="text-green-700 dark:text-green-400 text-sm">
-            Our app is now powered by Mistral AI! Enter your ingredients and preferences above, and we'll generate custom recipes tailored to your needs.
+            Our app is now powered by Mistral AI! Enter your ingredients and preferences above, and we&apos;ll generate custom recipes tailored to your needs.
           </p>
         </div>
 
