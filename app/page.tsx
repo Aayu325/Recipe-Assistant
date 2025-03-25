@@ -18,9 +18,11 @@ enum View {
 }
 
 interface DailyMealPlan {
+  day: string;
   breakfast: Recipe;
   lunch: Recipe;
   dinner: Recipe;
+  onViewRecipe?: (recipe: Recipe) => void;
 }
 
 export default function Home() {
