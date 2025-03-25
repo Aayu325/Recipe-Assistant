@@ -1,10 +1,4 @@
-// Since this component is disabled, we don't need any imports
-
-interface ApiKeyModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSave: (apiKey: string) => void;
-}
+// Since this component is disabled, we don't need any imports or interfaces
 
 // This component is now unused since we're using a hardcoded API key
 export default function ApiKeyModal() {
