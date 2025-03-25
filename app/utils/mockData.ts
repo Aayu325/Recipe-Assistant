@@ -296,7 +296,9 @@ export const filterRecipes = (
             i.toLowerCase().includes('butter')
           );
         case 'keto':
-          return recipe.carbs < 20; // Simplified check for keto
+          // Extract number from carbs string (e.g., "30g" -> 30)
+          const carbsValue = parseInt(recipe.carbs, 10);
+          return !isNaN(carbsValue) && carbsValue < 20; // Simplified check for keto
         case 'gluten-free':
           return !recipe.ingredients.some(i => 
             i.toLowerCase().includes('wheat') || 
@@ -305,9 +307,13 @@ export const filterRecipes = (
             i.toLowerCase().includes('pasta')
           );
         case 'high-protein':
-          return recipe.protein > 25; // Simplified check for high protein
+          // Extract number from protein string (e.g., "35g" -> 35)
+          const proteinValue = parseInt(recipe.protein, 10);
+          return !isNaN(proteinValue) && proteinValue > 25; // Simplified check for high protein
         case 'low-carb':
-          return recipe.carbs < 30; // Simplified check for low carb
+          // Extract number from carbs string (e.g., "30g" -> 30)
+          const carbsVal = parseInt(recipe.carbs, 10);
+          return !isNaN(carbsVal) && carbsVal < 30; // Simplified check for low carb
         default:
           return true;
       }
