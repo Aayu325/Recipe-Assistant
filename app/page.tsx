@@ -107,7 +107,14 @@ export default function Home() {
     // Use filtered recipes if available, otherwise use mock recipes
     const recipes = filteredRecipes.length > 0 ? filteredRecipes : mockRecipes;
     const plan = generateMealPlan(recipes);
-    setMealPlan(plan);
+    
+    // Add the onViewRecipe callback to each day in the meal plan
+    const planWithCallback = plan.map(dayPlan => ({
+      ...dayPlan,
+      onViewRecipe: handleViewRecipeDetails
+    }));
+    
+    setMealPlan(planWithCallback);
     setView(View.MEAL_PLAN);
   };
 

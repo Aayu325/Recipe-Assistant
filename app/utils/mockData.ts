@@ -5,6 +5,7 @@ interface DailyMealPlan {
   breakfast: Recipe;
   lunch: Recipe;
   dinner: Recipe;
+  onViewRecipe?: (recipe: Recipe) => void;
 }
 
 export const mockRecipes: Recipe[] = [
