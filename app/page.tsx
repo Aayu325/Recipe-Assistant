@@ -19,6 +19,7 @@ export default function Home() {
   const [filteredRecipes, setFilteredRecipes] = useState<Recipe[]>([]);
   const [mealPlan, setMealPlan] = useState<{ [key: string]: { breakfast: Recipe; lunch: Recipe; dinner: Recipe } }>({});
   const [error, setError] = useState<string | null>(null);
+  const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
 
   const handleFormSubmit = async (data: {
     ingredients: string[];
@@ -65,6 +66,13 @@ export default function Home() {
     setFilteredRecipes([]);
     setMealPlan({});
     setError(null);
+    setSelectedRecipe(null);
+  };
+
+  const handleViewRecipe = (recipe: Recipe) => {
+    setSelectedRecipe(recipe);
+    // You could add a modal or new view to show the recipe details
+    console.log('Viewing recipe:', recipe);
   };
 
   return (
@@ -100,7 +108,7 @@ export default function Home() {
                 Generate Meal Plan
               </button>
             </div>
-            <RecipeList recipes={filteredRecipes} />
+            <RecipeList recipes={filteredRecipes} onViewRecipe={handleViewRecipe} />
           </div>
         )}
 
@@ -118,15 +126,9 @@ export default function Home() {
               mealPlan={Object.entries(mealPlan).map(([day, meals]) => ({
                 day,
                 ...meals,
-                onViewRecipe: (recipe: Recipe) => {
-                  // Handle recipe view
-                  console.log('Viewing recipe:', recipe);
-                }
+                onViewRecipe: handleViewRecipe
               }))} 
-              onViewRecipe={(recipe: Recipe) => {
-                // Handle recipe view
-                console.log('Viewing recipe:', recipe);
-              }}
+              onViewRecipe={handleViewRecipe}
             />
           </div>
         )}
