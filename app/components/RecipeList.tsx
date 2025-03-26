@@ -6,6 +6,8 @@ interface RecipeListProps {
   recipes: Recipe[];
 }
 
+const DEFAULT_IMAGE = 'https://source.unsplash.com/featured/?food,recipe';
+
 const RecipeList: React.FC<RecipeListProps> = ({ recipes }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -16,7 +18,7 @@ const RecipeList: React.FC<RecipeListProps> = ({ recipes }) => {
         >
           <div className="relative h-48">
             <Image
-              src={recipe.image}
+              src={recipe.image || DEFAULT_IMAGE}
               alt={recipe.name}
               fill
               className="object-cover"

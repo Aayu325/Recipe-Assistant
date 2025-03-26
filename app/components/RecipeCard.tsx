@@ -6,7 +6,7 @@ import { FaClock, FaUtensils, FaHeart, FaRegHeart, FaFireAlt } from 'react-icons
 export interface Recipe {
   id: string;
   name: string;
-  image?: string;
+  image: string;
   ingredients: string[];
   instructions: string[];
   cookingTime: string;
