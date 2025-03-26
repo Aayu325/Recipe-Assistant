@@ -5,9 +5,8 @@ import UserInputForm from './components/UserInputForm';
 import RecipeList from './components/RecipeList';
 import MealPlan from './components/MealPlan';
 import { fetchRecipesWithAPI } from './utils/mistralService';
-import { mockRecipes } from './utils/mockData';
+import { mockRecipes, generateMealPlan } from './utils/mockData';
 import { Recipe } from './components/RecipeCard';
-import { DailyMealPlan } from './components/MealPlan';
 
 enum View {
   FORM = 'FORM',
@@ -18,7 +17,7 @@ enum View {
 export default function Home() {
   const [view, setView] = useState<View>(View.FORM);
   const [filteredRecipes, setFilteredRecipes] = useState<Recipe[]>([]);
-  const [mealPlan, setMealPlan] = useState<DailyMealPlan[]>([]);
+  const [mealPlan, setMealPlan] = useState<{ [key: string]: { breakfast: Recipe; lunch: Recipe; dinner: Recipe } }>({});
   const [error, setError] = useState<string | null>(null);
 
   const handleFormSubmit = async (data: {
@@ -52,8 +51,8 @@ export default function Home() {
   };
 
   const handleGenerateMealPlan = () => {
-    const mealPlan = generateMealPlan(filteredRecipes);
-    setMealPlan(mealPlan);
+    const newMealPlan = generateMealPlan();
+    setMealPlan(newMealPlan);
     setView(View.MEAL_PLAN);
   };
 
@@ -64,7 +63,7 @@ export default function Home() {
   const handleBackToForm = () => {
     setView(View.FORM);
     setFilteredRecipes([]);
-    setMealPlan([]);
+    setMealPlan({});
     setError(null);
   };
 
@@ -115,7 +114,20 @@ export default function Home() {
                 Back to Recipes
               </button>
             </div>
-            <MealPlan mealPlan={mealPlan} />
+            <MealPlan 
+              mealPlan={Object.entries(mealPlan).map(([day, meals]) => ({
+                day,
+                ...meals,
+                onViewRecipe: (recipe: Recipe) => {
+                  // Handle recipe view
+                  console.log('Viewing recipe:', recipe);
+                }
+              }))} 
+              onViewRecipe={(recipe: Recipe) => {
+                // Handle recipe view
+                console.log('Viewing recipe:', recipe);
+              }}
+            />
           </div>
         )}
       </div>
