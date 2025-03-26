@@ -9,6 +9,9 @@ interface UserInputFormProps {
     dietaryPreferences: string[];
     mealType: string;
     allergies: string[];
+    cookingTime: string;
+    cuisineType: string;
+    healthGoals: string[];
   }) => void;
 }
 
@@ -19,6 +22,10 @@ export default function UserInputForm({ onSubmit }: UserInputFormProps) {
   const [mealType, setMealType] = useState('');
   const [allergy, setAllergy] = useState('');
   const [allergies, setAllergies] = useState<string[]>([]);
+  const [cookingTime, setCookingTime] = useState('30 minutes');
+  const [cuisineType, setCuisineType] = useState('Any');
+  const [healthGoal, setHealthGoal] = useState('');
+  const [healthGoals, setHealthGoals] = useState<string[]>([]);
 
   const dietaryOptions = [
     'Vegetarian',
@@ -43,6 +50,38 @@ export default function UserInputForm({ onSubmit }: UserInputFormProps) {
     'Salad',
     'Main Course',
     'Side Dish',
+  ];
+
+  const cookingTimeOptions = [
+    '15 minutes',
+    '30 minutes',
+    '45 minutes',
+    '1 hour',
+    'More than 1 hour'
+  ];
+
+  const cuisineTypeOptions = [
+    'Any',
+    'Italian',
+    'Mexican',
+    'Chinese',
+    'Indian',
+    'Japanese',
+    'Mediterranean',
+    'American',
+    'Thai',
+    'Middle Eastern'
+  ];
+
+  const healthGoalOptions = [
+    'Weight Loss',
+    'Muscle Gain',
+    'Heart Health',
+    'Energy Boost',
+    'Digestive Health',
+    'Immune Support',
+    'Brain Health',
+    'Bone Health'
   ];
 
   const commonAllergies = [
@@ -86,6 +125,17 @@ export default function UserInputForm({ onSubmit }: UserInputFormProps) {
     setAllergies(allergies.filter((_, i) => i !== index));
   };
 
+  const handleAddHealthGoal = () => {
+    if (healthGoal.trim() && !healthGoals.includes(healthGoal.trim())) {
+      setHealthGoals([...healthGoals, healthGoal.trim()]);
+      setHealthGoal('');
+    }
+  };
+
+  const handleRemoveHealthGoal = (index: number) => {
+    setHealthGoals(healthGoals.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit({
@@ -93,6 +143,9 @@ export default function UserInputForm({ onSubmit }: UserInputFormProps) {
       dietaryPreferences,
       mealType,
       allergies,
+      cookingTime,
+      cuisineType,
+      healthGoals,
     });
   };
 
@@ -190,6 +243,40 @@ export default function UserInputForm({ onSubmit }: UserInputFormProps) {
           </select>
         </div>
 
+        <div className="mb-6">
+          <label className="block text-gray-700 dark:text-gray-200 font-medium mb-2">
+            Cooking Time
+          </label>
+          <select
+            value={cookingTime}
+            onChange={(e) => setCookingTime(e.target.value)}
+            className="w-full border rounded-md p-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+          >
+            {cookingTimeOptions.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="mb-6">
+          <label className="block text-gray-700 dark:text-gray-200 font-medium mb-2">
+            Cuisine Type
+          </label>
+          <select
+            value={cuisineType}
+            onChange={(e) => setCuisineType(e.target.value)}
+            className="w-full border rounded-md p-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+          >
+            {cuisineTypeOptions.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        </div>
+
         <div className="mb-8">
           <label className="block text-gray-700 dark:text-gray-200 font-medium mb-2">
             Allergies
@@ -227,6 +314,51 @@ export default function UserInputForm({ onSubmit }: UserInputFormProps) {
                   type="button"
                   onClick={() => handleRemoveAllergy(index)}
                   className="ml-2 text-red-600 dark:text-red-300 hover:text-red-800 dark:hover:text-red-100"
+                >
+                  <FaTrash size={12} />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="mb-6">
+          <label className="block text-gray-700 dark:text-gray-200 font-medium mb-2">
+            Health Goals
+          </label>
+          <div className="flex">
+            <input
+              type="text"
+              value={healthGoal}
+              onChange={(e) => setHealthGoal(e.target.value)}
+              className="flex-grow border rounded-l-md p-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              placeholder="Add a health goal (e.g., Weight Loss)"
+              list="health-goals"
+            />
+            <datalist id="health-goals">
+              {healthGoalOptions.map((item) => (
+                <option key={item} value={item} />
+              ))}
+            </datalist>
+            <button
+              type="button"
+              onClick={handleAddHealthGoal}
+              className="bg-blue-500 text-white p-2 rounded-r-md hover:bg-blue-600"
+            >
+              <FaPlus />
+            </button>
+          </div>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {healthGoals.map((item, index) => (
+              <div
+                key={index}
+                className="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-100 px-3 py-1 rounded-full flex items-center"
+              >
+                <span>{item}</span>
+                <button
+                  type="button"
+                  onClick={() => handleRemoveHealthGoal(index)}
+                  className="ml-2 text-green-600 dark:text-green-300 hover:text-green-800 dark:hover:text-green-100"
                 >
                   <FaTrash size={12} />
                 </button>

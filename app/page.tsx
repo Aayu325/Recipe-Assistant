@@ -33,70 +33,38 @@ export default function Home() {
   // Mistral AI is enabled by default since we have the key hardcoded
   const [isUsingMistral, setIsUsingMistral] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleFormSubmit = async (formData: {
+  const handleFormSubmit = async (data: {
     ingredients: string[];
     dietaryPreferences: string[];
     mealType: string;
     allergies: string[];
+    cookingTime: string;
+    cuisineType: string;
+    healthGoals: string[];
   }) => {
-    setError(null);
-    
-    // Check if ingredients are provided
-    if (formData.ingredients.length === 0) {
-      setError("Please add at least one ingredient to search for recipes.");
-      return;
-    }
-
-    // Set loading state
-    setView(View.LOADING);
-
     try {
-      // If Mistral AI is enabled (which is by default)
-      if (isUsingMistral) {
-        // Attempt to generate recipes with Mistral AI
-        const recipes = await fetchRecipesWithAPI(
-          formData.ingredients,
-          formData.dietaryPreferences,
-          formData.mealType,
-          formData.allergies
-        );
-        
-        if (recipes && recipes.length > 0) {
-          setFilteredRecipes(recipes);
-          setView(View.RECIPES);
-          return; // Exit early if we have AI-generated recipes
-        } else {
-          setError("Couldn&apos;t generate custom recipes. Showing results from our database instead.");
-        }
-      }
-      
-      // If we reach here, either Mistral AI is not enabled or it failed to generate recipes
-      // Fallback to mock data
-      const filtered = filterRecipes(
-        mockRecipes,
-        formData.ingredients,
-        formData.dietaryPreferences,
-        formData.mealType,
-        formData.allergies
+      setLoading(true);
+      setError(null);
+      const recipes = await fetchRecipesWithAPI(
+        data.ingredients,
+        data.dietaryPreferences,
+        data.mealType,
+        data.allergies,
+        data.cookingTime,
+        data.cuisineType,
+        data.healthGoals
       );
-      
-      if (filtered.length > 0) {
-        setFilteredRecipes(filtered);
-      } else {
-        // If no results in mock data, show all recipes
-        setFilteredRecipes(mockRecipes);
-        if (!error) {
-          setError("No recipes matched your criteria exactly. Showing all available recipes instead.");
-        }
-      }
-      
+      setFilteredRecipes(recipes);
       setView(View.RECIPES);
-    } catch (err) {
-      console.error('Error processing recipes:', err);
-      setError("There was an error processing your request. Showing all available recipes.");
+    } catch (error) {
+      console.error('Error processing recipes:', error);
+      setError('Failed to generate recipes. Please try again.');
       setFilteredRecipes(mockRecipes);
       setView(View.RECIPES);
+    } finally {
+      setLoading(false);
     }
   };
 

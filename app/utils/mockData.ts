@@ -190,6 +190,156 @@ export const mockRecipes: Recipe[] = [
     protein: '12g',
     carbs: '45g',
     fat: '7g'
+  },
+  {
+    id: "1",
+    name: "Mediterranean Quinoa Bowl",
+    description: "A healthy and protein-rich bowl with Mediterranean flavors",
+    ingredients: [
+      "1 cup quinoa",
+      "1 can chickpeas",
+      "1 cucumber",
+      "1 red onion",
+      "1 cup cherry tomatoes",
+      "1/2 cup olives",
+      "Feta cheese",
+      "Olive oil",
+      "Lemon juice",
+      "Fresh herbs"
+    ],
+    instructions: [
+      "Cook quinoa according to package instructions",
+      "Drain and rinse chickpeas",
+      "Chop vegetables",
+      "Combine all ingredients in a bowl",
+      "Dress with olive oil and lemon juice",
+      "Top with feta cheese and fresh herbs"
+    ],
+    nutritionalInfo: "Calories: 450, Protein: 18g, Carbs: 65g, Fat: 15g",
+    cookingTime: "25 minutes",
+    difficulty: "Easy",
+    servings: "2 servings",
+    calories: "450",
+    protein: "18",
+    carbs: "65",
+    fat: "15"
+  },
+  {
+    id: "2",
+    name: "Asian Stir-Fry",
+    description: "Quick and healthy Asian-inspired stir-fry",
+    ingredients: [
+      "2 cups mixed vegetables",
+      "1 block firm tofu",
+      "2 tbsp soy sauce",
+      "1 tbsp sesame oil",
+      "2 cloves garlic",
+      "1 inch ginger",
+      "Brown rice",
+      "Green onions"
+    ],
+    instructions: [
+      "Press and cube tofu",
+      "Cook rice according to package instructions",
+      "Heat sesame oil in a wok",
+      "Stir-fry vegetables until crisp-tender",
+      "Add tofu and sauce",
+      "Serve over rice"
+    ],
+    nutritionalInfo: "Calories: 380, Protein: 22g, Carbs: 45g, Fat: 12g",
+    cookingTime: "20 minutes",
+    difficulty: "Easy",
+    servings: "2 servings",
+    calories: "380",
+    protein: "22",
+    carbs: "45",
+    fat: "12"
+  },
+  {
+    id: "3",
+    name: "Mexican Black Bean Soup",
+    description: "Spicy and nutritious black bean soup",
+    ingredients: [
+      "2 cans black beans",
+      "1 onion",
+      "2 cloves garlic",
+      "1 bell pepper",
+      "1 can diced tomatoes",
+      "Cumin",
+      "Chili powder",
+      "Vegetable broth",
+      "Cilantro"
+    ],
+    instructions: [
+      "Sauté onion and garlic",
+      "Add bell pepper and spices",
+      "Add beans and tomatoes",
+      "Simmer for 20 minutes",
+      "Garnish with cilantro"
+    ],
+    nutritionalInfo: "Calories: 320, Protein: 15g, Carbs: 55g, Fat: 8g",
+    cookingTime: "30 minutes",
+    difficulty: "Easy",
+    servings: "4 servings",
+    calories: "320",
+    protein: "15",
+    carbs: "55",
+    fat: "8"
+  },
+  {
+    id: "4",
+    name: "Greek Yogurt Parfait",
+    description: "Healthy breakfast parfait with fresh fruits",
+    ingredients: [
+      "2 cups Greek yogurt",
+      "1 cup granola",
+      "Mixed berries",
+      "Honey",
+      "Almonds"
+    ],
+    instructions: [
+      "Layer Greek yogurt in a glass",
+      "Add granola layer",
+      "Top with berries",
+      "Drizzle with honey",
+      "Sprinkle with almonds"
+    ],
+    nutritionalInfo: "Calories: 280, Protein: 20g, Carbs: 35g, Fat: 10g",
+    cookingTime: "5 minutes",
+    difficulty: "Easy",
+    servings: "2 servings",
+    calories: "280",
+    protein: "20",
+    carbs: "35",
+    fat: "10"
+  },
+  {
+    id: "5",
+    name: "Baked Salmon",
+    description: "Healthy omega-3 rich salmon dish",
+    ingredients: [
+      "2 salmon fillets",
+      "Lemon",
+      "Dill",
+      "Garlic",
+      "Olive oil",
+      "Salt and pepper"
+    ],
+    instructions: [
+      "Preheat oven to 400°F",
+      "Season salmon with herbs",
+      "Drizzle with olive oil",
+      "Bake for 15 minutes",
+      "Serve with lemon wedges"
+    ],
+    nutritionalInfo: "Calories: 350, Protein: 35g, Carbs: 2g, Fat: 22g",
+    cookingTime: "20 minutes",
+    difficulty: "Easy",
+    servings: "2 servings",
+    calories: "350",
+    protein: "35",
+    carbs: "2",
+    fat: "22"
   }
 ];
 
