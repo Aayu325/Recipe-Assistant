@@ -4,11 +4,12 @@ import { Recipe } from './RecipeCard';
 
 interface RecipeListProps {
   recipes: Recipe[];
+  onViewRecipe: (recipe: Recipe) => void;
 }
 
 const DEFAULT_IMAGE = 'https://source.unsplash.com/featured/?food,recipe';
 
-const RecipeList: React.FC<RecipeListProps> = ({ recipes }) => {
+const RecipeList: React.FC<RecipeListProps> = ({ recipes, onViewRecipe }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {recipes.map((recipe) => (
@@ -36,6 +37,12 @@ const RecipeList: React.FC<RecipeListProps> = ({ recipes }) => {
             <div className="mt-4 pt-4 border-t">
               <p className="text-sm text-gray-600">{recipe.nutritionalInfo}</p>
             </div>
+            <button
+              onClick={() => onViewRecipe(recipe)}
+              className="mt-4 w-full px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
+            >
+              View Recipe
+            </button>
           </div>
         </div>
       ))}
