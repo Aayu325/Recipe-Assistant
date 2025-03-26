@@ -7,9 +7,12 @@ export interface Recipe {
   id: string;
   name: string;
   image: string;
+  description: string;
   ingredients: string[];
   instructions: string[];
   cookingTime: string;
+  difficulty: string;
+  servings: string;
   nutritionalInfo: string;
   calories: string;
   protein: string;
