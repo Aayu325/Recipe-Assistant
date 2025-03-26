@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import { Recipe } from './RecipeCard';
 
 interface RecipeListProps {
@@ -14,10 +15,12 @@ const RecipeList: React.FC<RecipeListProps> = ({ recipes }) => {
           className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
         >
           <div className="relative h-48">
-            <img
+            <Image
               src={recipe.image}
               alt={recipe.name}
-              className="w-full h-full object-cover"
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
           </div>
           <div className="p-4">
