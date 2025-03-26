@@ -22,10 +22,10 @@ export interface Recipe {
 
 interface RecipeCardProps {
   recipe: Recipe;
-  onViewDetails: (recipe: Recipe) => void;
+  onViewRecipe: (recipe: Recipe) => void;
 }
 
-export default function RecipeCard({ recipe, onViewDetails }: RecipeCardProps) {
+export default function RecipeCard({ recipe, onViewRecipe }: RecipeCardProps) {
   const [isFavorite, setIsFavorite] = useState(false);
 
   const toggleFavorite = (e: React.MouseEvent) => {
@@ -42,7 +42,7 @@ export default function RecipeCard({ recipe, onViewDetails }: RecipeCardProps) {
   return (
     <div 
       className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden cursor-pointer transition transform hover:scale-105 hover:shadow-lg"
-      onClick={() => onViewDetails(recipe)}
+      onClick={() => onViewRecipe(recipe)}
     >
       <div className="p-5">
         <div className="flex justify-between items-start">
@@ -99,7 +99,7 @@ export default function RecipeCard({ recipe, onViewDetails }: RecipeCardProps) {
             className="w-full px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
             onClick={(e) => {
               e.stopPropagation();
-              onViewDetails(recipe);
+              onViewRecipe(recipe);
             }}
           >
             View Recipe
