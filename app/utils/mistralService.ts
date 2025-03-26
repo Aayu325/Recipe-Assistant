@@ -198,6 +198,7 @@ export const fetchRecipesWithAPI = async (
             id: Math.random().toString(36).substr(2, 9),
             name: recipe.name,
             description: recipe.description,
+            image: `https://source.unsplash.com/featured/?food,${encodeURIComponent(recipe.name)}`,
             ingredients: recipe.ingredients,
             instructions: recipe.instructions,
             nutritionalInfo: recipe.nutritionalInfo,
@@ -238,6 +239,7 @@ export const fetchRecipesWithAPI = async (
                 id: Math.random().toString(36).substr(2, 9),
                 name: recipe.name,
                 description: recipe.description,
+                image: `https://source.unsplash.com/featured/?food,${encodeURIComponent(recipe.name)}`,
                 ingredients: recipe.ingredients,
                 instructions: recipe.instructions,
                 nutritionalInfo: recipe.nutritionalInfo,
@@ -263,6 +265,7 @@ export const fetchRecipesWithAPI = async (
                   id: Math.random().toString(36).substr(2, 9),
                   name: nameMatch[1],
                   description: descMatch ? descMatch[1] : "A delicious recipe",
+                  image: `https://source.unsplash.com/featured/?food,${encodeURIComponent(nameMatch[1])}`,
                   ingredients: ingredientsMatch[1]
                     .split(',')
                     .map(i => i.trim().replace(/"/g, '')),
