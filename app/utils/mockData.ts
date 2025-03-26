@@ -353,3 +353,4 @@ export const filterRecipes = (
     
     return hasIngredient && meetsDietaryPreferences && isMealType && noAllergies;
   }); 
+}; 
