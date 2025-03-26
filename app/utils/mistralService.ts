@@ -21,199 +21,116 @@ export const fetchRecipesWithAPI = async (
   dietaryPreferences: string[],
   mealType: string,
   allergies: string[],
-  cookingTime: string = "30 minutes",
-  cuisineType: string = "Any",
-  healthGoals: string[] = []
+  cookingTime: string,
+  cuisineType: string,
+  healthGoals: string[]
 ): Promise<Recipe[]> => {
   try {
-    // Using the hardcoded API key
-    const apiKey = MISTRAL_API_KEY;
-    
-    if (!apiKey) {
-      throw new Error('No API key available');
-    }
+    const prompt = `Generate 3 recipes based on the following criteria:
+    - Ingredients: ${ingredients.join(', ')}
+    - Dietary Preferences: ${dietaryPreferences.join(', ')}
+    - Meal Type: ${mealType}
+    - Allergies: ${allergies.join(', ')}
+    - Cooking Time: ${cookingTime}
+    - Cuisine Type: ${cuisineType}
+    - Health Goals: ${healthGoals.join(', ')}
 
-    // Construct the prompt after all variables are defined
-    const prompt = `Generate at least 3 healthy and delicious recipes that primarily use these ingredients: ${ingredients.join(", ")}.
+    IMPORTANT: Each recipe MUST use at least one of the provided ingredients as a main component.
+    The recipe names should reflect the main ingredient used.
+    Highlight the provided ingredients in the ingredients list.
+    Each recipe should use different combinations of the provided ingredients.
 
-    Additional criteria:
-    - Dietary preferences: ${dietaryPreferences.join(", ")}
-    - Meal type: ${mealType}
-    - Cooking time: ${cookingTime}
-    - Cuisine type: ${cuisineType}
-    - Health goals: ${healthGoals.join(", ")}
-    - Allergies: ${allergies.join(", ")}
-
-    IMPORTANT: Each recipe MUST use at least one of the provided ingredients as a main component. You can add other ingredients as needed, but the provided ingredients should be the primary focus.
-
-    For each recipe, provide the following information in a structured format:
-    1. Name of the recipe (should reflect the main ingredient)
-    2. Brief description
-    3. List of ingredients with quantities (highlight the provided ingredients)
-    4. Step-by-step cooking instructions
-    5. Nutritional information (calories, protein, carbs, fat)
-    6. Cooking time
-    7. Difficulty level
-    8. Servings
-
-    Format each recipe as a JSON object with these fields:
+    Return the response in the following JSON format:
     {
-      "name": "Recipe Name",
-      "description": "Brief description",
-      "ingredients": ["ingredient 1", "ingredient 2", ...],
-      "instructions": ["step 1", "step 2", ...],
-      "nutritionalInfo": "Calories: X, Protein: Yg, Carbs: Zg, Fat: Wg",
-      "cookingTime": "X minutes",
-      "difficulty": "Easy/Medium/Hard",
-      "servings": "X servings"
-    }
+      "recipes": [
+        {
+          "id": "1",
+          "name": "Recipe Name",
+          "image": "https://source.unsplash.com/featured/?food,recipe-name",
+          "description": "Brief description",
+          "ingredients": ["ingredient 1", "ingredient 2", ...],
+          "instructions": ["step 1", "step 2", ...],
+          "cookingTime": "30 minutes",
+          "difficulty": "Easy",
+          "servings": "4 servings",
+          "nutritionalInfo": "Calories: 350, Protein: 25g, Carbs: 20g, Fat: 15g",
+          "calories": "350",
+          "protein": "25",
+          "carbs": "20",
+          "fat": "15"
+        },
+        ...
+      ]
+    }`;
 
-    Return the recipes as a JSON array. Ensure you provide at least 3 unique recipes, each using different combinations of the provided ingredients.`;
-
-    const response = await axios.post(
-      "https://api.mistral.ai/v1/chat/completions",
-      {
+    const response = await fetch('https://api.mistral.ai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.NEXT_PUBLIC_MISTRAL_API_KEY}`
+      },
+      body: JSON.stringify({
         model: "mistral-tiny",
         messages: [{ role: "user", content: prompt }],
         temperature: 0.7,
-        max_tokens: 2000,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${MISTRAL_API_KEY}`,
-        },
-      }
-    );
+        max_tokens: 2000
+      })
+    });
 
-    const content = response.data.choices[0].message.content;
-    let recipes: Recipe[] = [];
+    if (!response.ok) {
+      throw new Error(`API request failed with status ${response.status}`);
+    }
+
+    const data = await response.json();
+    const content = data.choices[0].message.content;
+
+    // Clean up the response
+    const cleanedContent = content
+      .replace(/```json/g, '')
+      .replace(/```/g, '')
+      .trim()
+      .replace(/\n/g, ' ')
+      .replace(/\s+/g, ' ')
+      .replace(/,(\s*[}\]])/g, '$1') // Remove trailing commas
+      .replace(/([}\]])/g, '$1,') // Add missing commas between objects
+      .replace(/,(\s*[}\]])/g, '$1'); // Remove trailing commas again
 
     try {
-      // First try to clean up the entire response
-      const cleanedContent = content
-        .replace(/\n/g, ' ')
-        .replace(/\s+/g, ' ')
-        .replace(/,(\s*[}\]])/g, '$1') // Remove trailing commas
-        .replace(/\}\s*\{/g, '},{') // Fix missing commas between objects
-        .replace(/\[\s*\{/g, '[{') // Fix array start
-        .replace(/\}\s*\]/g, '}]') // Fix array end
-        .replace(/"\s*:\s*"/g, '":"') // Fix spacing around colons
-        .replace(/"\s*,\s*"/g, '","') // Fix spacing around commas
-        .replace(/\s+/g, ' ') // Normalize whitespace
-        .trim();
-
-      // Try to parse the cleaned response as JSON
-      try {
-        const parsedRecipes = JSON.parse(cleanedContent) as MistralRecipe[];
-        if (Array.isArray(parsedRecipes)) {
-          recipes = parsedRecipes.map((recipe) => ({
-            id: Math.random().toString(36).substr(2, 9),
-            name: recipe.name,
-            description: recipe.description,
-            image: `https://source.unsplash.com/featured/?food,${encodeURIComponent(recipe.name)}`,
-            ingredients: recipe.ingredients,
-            instructions: recipe.instructions,
-            nutritionalInfo: recipe.nutritionalInfo,
-            cookingTime: recipe.cookingTime,
-            difficulty: recipe.difficulty,
-            servings: recipe.servings,
-            calories: recipe.nutritionalInfo.match(/Calories: (\d+)/)?.[1] || "350",
-            protein: recipe.nutritionalInfo.match(/Protein: (\d+)g/)?.[1] || "15",
-            carbs: recipe.nutritionalInfo.match(/Carbs: (\d+)g/)?.[1] || "30",
-            fat: recipe.nutritionalInfo.match(/Fat: (\d+)g/)?.[1] || "12",
-          }));
-        }
-      } catch (error) {
-        console.error("Error parsing cleaned JSON response:", error);
-        
-        // If that fails, try to extract individual recipe blocks
-        const recipeBlocks = content.split(/\n(?=\s*\{)/);
-        recipes = recipeBlocks
-          .map((block) => {
-            try {
-              // Clean up each block
-              const cleanedBlock = block
-                .trim()
-                .replace(/\n/g, ' ')
-                .replace(/\s+/g, ' ')
-                .replace(/,(\s*[}\]])/g, '$1')
-                .replace(/\}\s*\{/g, '},{')
-                .replace(/\[\s*\{/g, '[{')
-                .replace(/\}\s*\]/g, '}]')
-                .replace(/"\s*:\s*"/g, '":"')
-                .replace(/"\s*,\s*"/g, '","')
-                .replace(/\s+/g, ' ')
-                .trim();
-
-              // Try to parse the cleaned block
-              const recipe = JSON.parse(cleanedBlock) as MistralRecipe;
-              return {
-                id: Math.random().toString(36).substr(2, 9),
-                name: recipe.name,
-                description: recipe.description,
-                image: `https://source.unsplash.com/featured/?food,${encodeURIComponent(recipe.name)}`,
-                ingredients: recipe.ingredients,
-                instructions: recipe.instructions,
-                nutritionalInfo: recipe.nutritionalInfo,
-                cookingTime: recipe.cookingTime,
-                difficulty: recipe.difficulty,
-                servings: recipe.servings,
-                calories: recipe.nutritionalInfo.match(/Calories: (\d+)/)?.[1] || "350",
-                protein: recipe.nutritionalInfo.match(/Protein: (\d+)g/)?.[1] || "15",
-                carbs: recipe.nutritionalInfo.match(/Carbs: (\d+)g/)?.[1] || "30",
-                fat: recipe.nutritionalInfo.match(/Fat: (\d+)g/)?.[1] || "12",
-              };
-            } catch (e) {
-              console.error("Error parsing individual recipe block:", e);
-              // If JSON parsing fails, try to extract recipe information using regex
-              const nameMatch = block.match(/"name"\s*:\s*"([^"]+)"/);
-              const descMatch = block.match(/"description"\s*:\s*"([^"]+)"/);
-              const ingredientsMatch = block.match(/"ingredients"\s*:\s*\[(.*?)\]/s);
-              const instructionsMatch = block.match(/"instructions"\s*:\s*\[(.*?)\]/s);
-              const nutritionMatch = block.match(/"nutritionalInfo"\s*:\s*"([^"]+)"/);
-
-              if (nameMatch && ingredientsMatch && instructionsMatch) {
-                return {
-                  id: Math.random().toString(36).substr(2, 9),
-                  name: nameMatch[1],
-                  description: descMatch ? descMatch[1] : "A delicious recipe",
-                  image: `https://source.unsplash.com/featured/?food,${encodeURIComponent(nameMatch[1])}`,
-                  ingredients: ingredientsMatch[1]
-                    .split(',')
-                    .map(i => i.trim().replace(/"/g, '')),
-                  instructions: instructionsMatch[1]
-                    .split(',')
-                    .map(i => i.trim().replace(/"/g, '')),
-                  nutritionalInfo: nutritionMatch ? nutritionMatch[1] : "Calories: 350, Protein: 15g, Carbs: 30g, Fat: 12g",
-                  cookingTime: "30 minutes",
-                  difficulty: "Easy",
-                  servings: "4 servings",
-                  calories: "350",
-                  protein: "15",
-                  carbs: "30",
-                  fat: "12"
-                };
-              }
-              return null;
-            }
-          })
-          .filter((recipe): recipe is Recipe => recipe !== null);
+      // First attempt: Try to parse the entire cleaned response
+      const parsedResponse = JSON.parse(cleanedContent);
+      if (parsedResponse.recipes && Array.isArray(parsedResponse.recipes)) {
+        return parsedResponse.recipes;
       }
     } catch (error) {
-      console.error("Error in recipe processing:", error);
+      console.warn('Error parsing cleaned JSON response:', error);
     }
 
-    // Ensure we have at least 3 recipes
-    if (recipes.length < 3) {
-      console.warn(`Only received ${recipes.length} recipes, adding mock recipes to reach minimum of 3`);
-      const additionalRecipes = mockRecipes.slice(0, 3 - recipes.length);
-      recipes = [...recipes, ...additionalRecipes];
+    try {
+      // Second attempt: Try to parse individual recipe blocks
+      const recipeBlocks = cleanedContent.match(/\{[\s\S]*?\}/g) || [];
+      const recipes = recipeBlocks
+        .map(block => {
+          try {
+            return JSON.parse(block);
+          } catch (error) {
+            console.warn('Error parsing individual recipe block:', error);
+            return null;
+          }
+        })
+        .filter((recipe): recipe is Recipe => recipe !== null);
+
+      if (recipes.length > 0) {
+        return recipes;
+      }
+    } catch (error) {
+      console.warn('Error parsing individual recipe blocks:', error);
     }
 
-    return recipes;
+    // If all parsing attempts fail, return mock recipes
+    console.warn('All parsing attempts failed, returning mock recipes');
+    return mockRecipes.slice(0, 3);
   } catch (error) {
-    console.error('Error fetching recipes from Mistral API:', error);
-    throw error;
+    console.error('Error in fetchRecipesWithAPI:', error);
+    return mockRecipes.slice(0, 3);
   }
 }; 
