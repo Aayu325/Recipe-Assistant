@@ -2,38 +2,24 @@
 
 import { useState } from 'react';
 import UserInputForm from './components/UserInputForm';
-import RecipeCard, { Recipe } from './components/RecipeCard';
-import RecipeDetails from './components/RecipeDetails';
+import RecipeList from './components/RecipeList';
 import MealPlan from './components/MealPlan';
-import { mockRecipes, filterRecipes, generateMealPlan } from './utils/mockData';
 import { fetchRecipesWithAPI } from './utils/mistralService';
-import { FaUtensils, FaCalendarAlt, FaSpinner, FaRobot } from 'react-icons/fa';
+import { mockRecipes } from './utils/mockData';
+import { Recipe } from './components/RecipeCard';
+import { DailyMealPlan } from './components/MealPlan';
 
 enum View {
-  INPUT,
-  RECIPES,
-  MEAL_PLAN,
-  RECIPE_DETAILS,
-  LOADING
-}
-
-interface DailyMealPlan {
-  day: string;
-  breakfast: Recipe;
-  lunch: Recipe;
-  dinner: Recipe;
-  onViewRecipe: (recipe: Recipe) => void;
+  FORM = 'FORM',
+  RECIPES = 'RECIPES',
+  MEAL_PLAN = 'MEAL_PLAN'
 }
 
 export default function Home() {
-  const [view, setView] = useState<View>(View.INPUT);
+  const [view, setView] = useState<View>(View.FORM);
   const [filteredRecipes, setFilteredRecipes] = useState<Recipe[]>([]);
-  const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const [mealPlan, setMealPlan] = useState<DailyMealPlan[]>([]);
-  // Mistral AI is enabled by default since we have the key hardcoded
-  const [isUsingMistral, setIsUsingMistral] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
 
   const handleFormSubmit = async (data: {
     ingredients: string[];
@@ -45,7 +31,6 @@ export default function Home() {
     healthGoals: string[];
   }) => {
     try {
-      setLoading(true);
       setError(null);
       const recipes = await fetchRecipesWithAPI(
         data.ingredients,
@@ -63,228 +48,77 @@ export default function Home() {
       setError('Failed to generate recipes. Please try again.');
       setFilteredRecipes(mockRecipes);
       setView(View.RECIPES);
-    } finally {
-      setLoading(false);
     }
-  };
-
-  const handleViewRecipeDetails = (recipe: Recipe) => {
-    setSelectedRecipe(recipe);
-    setView(View.RECIPE_DETAILS);
   };
 
   const handleGenerateMealPlan = () => {
-    // Use filtered recipes if available, otherwise use mock recipes
-    const recipes = filteredRecipes.length > 0 ? filteredRecipes : mockRecipes;
-    const plan = generateMealPlan(recipes);
-    
-    // Add the onViewRecipe callback to each day in the meal plan
-    const planWithCallback = plan.map(dayPlan => ({
-      ...dayPlan,
-      onViewRecipe: handleViewRecipeDetails
-    }));
-    
-    setMealPlan(planWithCallback);
+    const mealPlan = generateMealPlan(filteredRecipes);
+    setMealPlan(mealPlan);
     setView(View.MEAL_PLAN);
   };
 
-  const toggleMistralUsage = () => {
-    setIsUsingMistral(!isUsingMistral);
+  const handleBackToRecipes = () => {
+    setView(View.RECIPES);
   };
 
-  const renderContent = () => {
-    switch (view) {
-      case View.LOADING:
-        return (
-          <div className="flex flex-col items-center justify-center h-64">
-            <FaSpinner className="animate-spin text-blue-500 mb-4" size={40} />
-            <p className="text-lg">Generating delicious recipes just for you...</p>
-            <p className="text-sm text-gray-500 mt-2">This may take a moment</p>
-          </div>
-        );
-      
-      case View.INPUT:
-        return (
-          <>
-            <div className="mb-6 flex justify-end">
-              <button
-                onClick={toggleMistralUsage}
-                className={`flex items-center px-4 py-2 rounded-md ${
-                  isUsingMistral
-                    ? 'bg-green-500 text-white hover:bg-green-600'
-                    : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
-                }`}
-              >
-                <FaRobot className="mr-2" />
-                {isUsingMistral ? 'Using Mistral AI' : 'Use Standard Recipes'}
-              </button>
-            </div>
-            
-            {error && (
-              <div className="mb-6 p-4 bg-red-100 text-red-700 rounded-md">
-                {error}
-              </div>
-            )}
-            
-            <UserInputForm onSubmit={handleFormSubmit} />
-            
-            {isUsingMistral && (
-              <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/30 rounded-md">
-                <h3 className="font-bold mb-2">About Mistral AI Integration</h3>
-                <p className="text-sm">
-                  With Mistral AI enabled, we&apos;ll generate custom recipes based on your ingredients and preferences.
-                  This provides more diverse and personalized recipe suggestions beyond our standard database.
-                </p>
-              </div>
-            )}
-          </>
-        );
-      
-      case View.RECIPES:
-        return (
-          <div>
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold">Recipe Suggestions</h2>
-              <button
-                onClick={() => setView(View.INPUT)}
-                className="px-4 py-2 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600"
-              >
-                Modify Search
-              </button>
-            </div>
-            
-            {error && (
-              <div className="mb-6 p-4 bg-yellow-100 text-yellow-800 rounded-md">
-                {error}
-              </div>
-            )}
-            
-            {filteredRecipes.length === 0 ? (
-              <div className="text-center py-10">
-                <p className="text-lg mb-4">
-                  No recipes match your criteria. Try adjusting your search parameters.
-                </p>
-                <button
-                  onClick={() => setView(View.INPUT)}
-                  className="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-                >
-                  Back to Search
-                </button>
-              </div>
-            ) : (
-              <>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {filteredRecipes.map((recipe) => (
-                    <RecipeCard
-                      key={recipe.id}
-                      recipe={recipe}
-                      onViewDetails={handleViewRecipeDetails}
-                    />
-                  ))}
-                </div>
-                
-                <div className="mt-8 text-center">
-                  <button
-                    onClick={handleGenerateMealPlan}
-                    className="px-6 py-3 bg-green-500 text-white rounded-md hover:bg-green-600 flex items-center mx-auto"
-                  >
-                    <FaCalendarAlt className="mr-2" />
-                    Generate Meal Plan
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
-        );
-      
-      case View.MEAL_PLAN:
-        return (
-          <div>
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold">Your Meal Plan</h2>
-              <div>
-                <button
-                  onClick={() => setView(View.RECIPES)}
-                  className="px-4 py-2 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600 mr-2"
-                >
-                  Back to Recipes
-                </button>
-                <button
-                  onClick={() => setView(View.INPUT)}
-                  className="px-4 py-2 text-sm bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
-                >
-                  New Search
-                </button>
-              </div>
-            </div>
-            
-            <MealPlan mealPlan={mealPlan} onViewRecipe={handleViewRecipeDetails} />
-          </div>
-        );
-      
-      case View.RECIPE_DETAILS:
-        return selectedRecipe ? (
-          <RecipeDetails recipe={selectedRecipe} onClose={() => setView(View.RECIPES)} />
-        ) : (
-          <div className="text-center py-10">
-            <p className="text-lg mb-4">Recipe not found</p>
-            <button
-              onClick={() => setView(View.RECIPES)}
-              className="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-            >
-              Back to Recipes
-            </button>
-          </div>
-        );
-    }
+  const handleBackToForm = () => {
+    setView(View.FORM);
+    setFilteredRecipes([]);
+    setMealPlan([]);
+    setError(null);
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <header className="bg-white dark:bg-gray-800 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 flex justify-between items-center">
-          <div className="flex items-center">
-            <FaUtensils className="text-green-500 mr-2" size={24} />
-            <h1 className="text-xl font-bold text-gray-900 dark:text-white">Recipe Assistant</h1>
+    <main className="min-h-screen bg-gray-100 dark:bg-gray-900 py-8">
+      <div className="container mx-auto px-4">
+        <h1 className="text-4xl font-bold text-center mb-8 text-gray-800 dark:text-white">
+          Recipe Assistant
+        </h1>
+
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <span className="block sm:inline">{error}</span>
           </div>
-          
-          <nav className="flex space-x-4">
-            <button
-              onClick={() => setView(View.INPUT)}
-              className={`px-3 py-2 rounded-md text-sm font-medium ${
-                view === View.INPUT
-                  ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100'
-                  : 'text-gray-600 hover:text-green-600 dark:text-gray-300 dark:hover:text-green-300'
-              }`}
-            >
-              Find Recipes
-            </button>
-            <button
-              onClick={handleGenerateMealPlan}
-              className={`px-3 py-2 rounded-md text-sm font-medium ${
-                view === View.MEAL_PLAN
-                  ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100'
-                  : 'text-gray-600 hover:text-green-600 dark:text-gray-300 dark:hover:text-green-300'
-              }`}
-              disabled={filteredRecipes.length === 0 && view === View.INPUT}
-            >
-              Meal Plan
-            </button>
-          </nav>
-        </div>
-      </header>
-      
-      <main className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-        {renderContent()}
-      </main>
-      
-      <footer className="bg-white dark:bg-gray-800 mt-auto py-6">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-center text-sm text-gray-500 dark:text-gray-400">
-            Recipe Assistant - Find recipes and create meal plans based on your ingredients and preferences
-          </p>
-        </div>
-      </footer>
-    </div>
+        )}
+
+        {view === View.FORM && (
+          <UserInputForm onSubmit={handleFormSubmit} />
+        )}
+
+        {view === View.RECIPES && (
+          <div>
+            <div className="flex justify-between items-center mb-6">
+              <button
+                onClick={handleBackToForm}
+                className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+              >
+                Back to Search
+              </button>
+              <button
+                onClick={handleGenerateMealPlan}
+                className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+              >
+                Generate Meal Plan
+              </button>
+            </div>
+            <RecipeList recipes={filteredRecipes} />
+          </div>
+        )}
+
+        {view === View.MEAL_PLAN && (
+          <div>
+            <div className="flex justify-between items-center mb-6">
+              <button
+                onClick={handleBackToRecipes}
+                className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+              >
+                Back to Recipes
+              </button>
+            </div>
+            <MealPlan mealPlan={mealPlan} />
+          </div>
+        )}
+      </div>
+    </main>
   );
 }

@@ -5,6 +5,17 @@ import { mockRecipes } from './mockData';
 // Hardcoded Mistral API key
 const MISTRAL_API_KEY = "1NfsBB7FUH0UJFdiAtWQ8f2hy0jM8slZ";
 
+interface MistralRecipe {
+  name: string;
+  description: string;
+  ingredients: string[];
+  instructions: string[];
+  nutritionalInfo: string;
+  cookingTime: string;
+  difficulty: string;
+  servings: string;
+}
+
 // Generate a unique ID for each recipe
 const generateId = () => Math.random().toString(36).substring(2, 9);
 
@@ -109,17 +120,6 @@ export const fetchRecipesWithAPI = async (
       throw new Error('No API key available');
     }
 
-    // Constructing a prompt that's specific about the format we want
-    const dietaryText = dietaryPreferences.length > 0 
-      ? `dietary preferences: ${dietaryPreferences.join(', ')}` 
-      : '';
-    
-    const allergiesText = allergies.length > 0 
-      ? `allergies to avoid: ${allergies.join(', ')}` 
-      : '';
-    
-    const mealTypeText = mealType ? `meal type: ${mealType}` : '';
-    
     // Construct the prompt after all variables are defined
     const prompt = `Generate at least 3 healthy and delicious recipes that primarily use these ingredients: ${ingredients.join(", ")}.
 
@@ -192,9 +192,9 @@ export const fetchRecipesWithAPI = async (
 
       // Try to parse the cleaned response as JSON
       try {
-        const parsedRecipes = JSON.parse(cleanedContent);
+        const parsedRecipes = JSON.parse(cleanedContent) as MistralRecipe[];
         if (Array.isArray(parsedRecipes)) {
-          recipes = parsedRecipes.map((recipe: any) => ({
+          recipes = parsedRecipes.map((recipe) => ({
             id: Math.random().toString(36).substr(2, 9),
             name: recipe.name,
             description: recipe.description,
@@ -233,7 +233,7 @@ export const fetchRecipesWithAPI = async (
                 .trim();
 
               // Try to parse the cleaned block
-              const recipe = JSON.parse(cleanedBlock);
+              const recipe = JSON.parse(cleanedBlock) as MistralRecipe;
               return {
                 id: Math.random().toString(36).substr(2, 9),
                 name: recipe.name,
